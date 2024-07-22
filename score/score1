@@ -65,7 +65,8 @@ class SCORE(object):
         policy_freq=2,
         alpha=2.5,
         num_ensemble=5,
-        beta=0.2,
+                         #第三处修改，删除   beta=0.2
+        bate_create=1.01 #修改
         bc_decay=0.98,
         spectral_norm=False,
     ):
@@ -97,9 +98,10 @@ class SCORE(object):
         self.alpha = alpha
 
         self.num_ensemble = num_ensemble
-        self.beta = beta
+        self.beta = 0.1
         self.bc = 1.0
         self.bc_decay = bc_decay
+        self.bate_create= bate_create #修改
 
         self._num_update_steps = 0
         self._num_critic_update_steps = 0
@@ -190,7 +192,7 @@ class SCORE(object):
                 # Compute the target Q value
                 for en_idx in range(self.num_ensemble):
                     target_Q_ = self.L_critic_target[en_idx](next_state, new_next_action)                  
-                    target_Q = reward + not_done * self.discount * target_Q_ - self.beta*std_Q
+                    target_Q = reward + not_done * self.discount * target_Q_ - self.beta*std_Q_pi #第一个修改
                     L_target_Q.append(target_Q)
 
             # Get current Q estimates
@@ -242,6 +244,9 @@ class SCORE(object):
             self._num_update_steps += 1
             if self.bc_decay < 1 and self._num_update_steps % 10000 ==0:
                 self.bc = self.bc*self.bc_decay #每一万步衰减2%
+#第二个修改
+            if self.bate_create < 1 and self._num_update_steps % 10000 ==0:
+                self.bate = self.bate*self.bate_create #每一万步增长1%
 
             """
             Save Statistics for Log
