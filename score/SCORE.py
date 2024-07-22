@@ -220,9 +220,9 @@ class SCORE(object):
 
                 lmbda = self.alpha/new_current_Q.abs().mean().detach()
                 q_loss = new_current_Q
-                bc_loss = F.mse_loss(new_action, action, reduce=False).mean(dim=1)
-                actor_loss = -lmbda * q_loss + self.bc*bc_loss.mean()
-                actor_loss = actor_loss.mean()
+                bc_loss = F.mse_loss(new_action, action, reduce=False).mean(dim=1) #得到每个样本在动作维度上的平均值
+                actor_loss = -lmbda * q_loss + self.bc*bc_loss.mean() #得到每个样本的actor loss
+                actor_loss = actor_loss.mean() #求平均，得到标量
                 
                 # Optimize the actor 
                 self.actor_optimizer.zero_grad()
@@ -233,15 +233,15 @@ class SCORE(object):
 
                 # Update the frozen target models
                 for en_idx in range(self.num_ensemble):
-                    for param, target_param in zip(self.L_critic[en_idx].parameters(), self.L_critic_target[en_idx].parameters()):
-                        target_param.data.copy_(self.tau * param.data + (1 - self.tau) * target_param.data)
+                    for param, target_param in zip(self.L_critic[en_idx].parameters(), self.L_critic_target[en_idx].parameters()): # 将当前 Critic 网络的参数与对应的目标网络的参数配对
+                        target_param.data.copy_(self.tau * param.data + (1 - self.tau) * target_param.data) #过软更新公式更新目标网络的参数
 
                 for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
                     target_param.data.copy_(self.tau * param.data + (1 - self.tau) * target_param.data)
                 
             self._num_update_steps += 1
             if self.bc_decay < 1 and self._num_update_steps % 10000 ==0:
-                self.bc = self.bc*self.bc_decay
+                self.bc = self.bc*self.bc_decay #每一万步衰减2%
 
             """
             Save Statistics for Log
