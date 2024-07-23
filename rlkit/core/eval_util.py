@@ -33,6 +33,13 @@ def get_generic_path_information(paths, stat_prefix=''):
     statistics['Num Paths'] = len(paths)
     statistics[stat_prefix + 'Average Returns'] = get_average_returns(paths)
 
+
+    #计算d4rl分数
+    if env is not None and hasattr(env, 'get_normalized_score'):
+        avg_reward=get_average_returns(paths)
+        d4rl_score = env.get_normalized_score(avg_reward) * 100
+        statistics[stat_prefix + 'D4rl Score'] = get_average_returns(paths)
+
     return statistics
 
     for info_key in ['env_infos', 'agent_infos']:
