@@ -32,7 +32,7 @@ def get_epoch_timings():
     times['time/total (s)'] = gt.get_times().total
     return times
 
-def log_stats(epoch, policy, paths):
+def log_stats(epoch, policy, paths, env=None):#修改 添加了,env=None
     logger.log("Epoch {} finished".format(epoch), with_timestamp=True)
 
     """
