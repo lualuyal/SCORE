@@ -66,7 +66,7 @@ def train_SCORE(device, args):
         gt.stamp('training', unique=False)
         paths = eval_policy(policy, env, mean, std, max_path_length=args.max_path_length)
         gt.stamp('evaluation sampling')
-        log_stats(epoch, policy, paths)
+        log_stats(epoch, policy, paths, env=env) #修改 添加了env=env
         policy.end_epoch(epoch)
 
     snapshot = policy.get_snapshot()
