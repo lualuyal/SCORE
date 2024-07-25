@@ -66,7 +66,7 @@ class SCORE(object):
         alpha=2.5,
         num_ensemble=5,
                          #第三处修改，删除   beta=0.2
-        bate_create=1.01 #修改
+        beta_create=1.01 #修改
         bc_decay=0.98,
         spectral_norm=False,
     ):
@@ -98,10 +98,10 @@ class SCORE(object):
         self.alpha = alpha
 
         self.num_ensemble = num_ensemble
-        self.beta = 0.1
+        self.beta = 0.1 #添加
         self.bc = 1.0
         self.bc_decay = bc_decay
-        self.bate_create= bate_create #修改
+        self.beta_create= beta_create #修改
 
         self._num_update_steps = 0
         self._num_critic_update_steps = 0
@@ -245,8 +245,8 @@ class SCORE(object):
             if self.bc_decay < 1 and self._num_update_steps % 10000 ==0:
                 self.bc = self.bc*self.bc_decay #每一万步衰减2%
 #第二个修改
-            if self.bate_create < 1 and self._num_update_steps % 10000 ==0:
-                self.bate = self.bate*self.bate_create #每一万步增长1%
+            if self.beta_create < 1 and self._num_update_steps % 10000 ==0:
+                self.beta = self.beta*self.beta_create #每一万步增长1%
 
             """
             Save Statistics for Log
